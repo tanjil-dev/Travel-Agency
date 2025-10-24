@@ -27,7 +27,11 @@ class MyHomePage extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: Image.asset("assets/images/bell_icon.png", height: 24, width: 24,),
+            child: Stack(
+                children: [
+                Image.asset("assets/images/mdi_bell.png", height: 24, width: 24,),
+              ]
+            ),
           ),
         ],
       ),
