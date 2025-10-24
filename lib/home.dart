@@ -39,55 +39,49 @@ class MyHomePage extends StatelessWidget {
               /// Calender
               Row(
                 children: [
-                  Expanded(
-                    flex: 3, // 3 parts out of total 5
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF007EF2).withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/images/clarity_date-line.png",
-                            height: 16,
-                            width: 16,
-                            fit: BoxFit.cover,
-                          ),
-                          SizedBox(width: 10),
-                          Flexible(
-                            child: Text(
-                              "24 OCT - 26 OCT",
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.openSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF007EF2),
-                              ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF007EF2).withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          "assets/images/clarity_date-line.png",
+                          height: 16,
+                          width: 16,
+                          fit: BoxFit.cover,
+                        ),
+                        SizedBox(width: 10),
+                        FittedBox(
+                          child: Text(
+                            "24 OCT - 26 OCT",
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.openSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF007EF2),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(width: 10),
-                  Expanded(
-                    flex: 2, // 2 parts out of total 5
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF007EF2).withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "3 Guests",
-                          style: GoogleFonts.openSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF007EF2),
-                          ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF007EF2).withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "3 Guests",
+                        style: GoogleFonts.openSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF007EF2),
                         ),
                       ),
                     ),
