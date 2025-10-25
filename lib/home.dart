@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_api/hooks_testing.dart';
+import 'package:travel_agency/services/hotel_api_service.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -17,7 +19,7 @@ class MyHomePage extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: Colors.black,
             ),),
-            Text("Bali, Indonesia", style: GoogleFonts.openSans(
+            Text("Tokyo, Japan", style: GoogleFonts.openSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: Color(0xFF007EF2),
@@ -35,33 +37,67 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
-            children: [
-              /// Calender
-              Row(
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchHotels(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
+
+          final hotels = snapshot.data!;
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF007EF2).withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/clarity_date-line.png",
-                          height: 16,
-                          width: 16,
-                          fit: BoxFit.cover,
+
+                  /// Calender
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF007EF2).withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        SizedBox(width: 10),
-                        FittedBox(
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              "assets/images/clarity_date-line.png",
+                              height: 16,
+                              width: 16,
+                              fit: BoxFit.cover,
+                            ),
+                            SizedBox(width: 10),
+                            FittedBox(
+                              child: Text(
+                                "24 OCT - 26 OCT",
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.openSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF007EF2),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF007EF2).withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
                           child: Text(
-                            "24 OCT - 26 OCT",
-                            overflow: TextOverflow.ellipsis,
+                            "3 Guests",
                             style: GoogleFonts.openSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -69,514 +105,415 @@ class MyHomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF007EF2).withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "3 Guests",
-                        style: GoogleFonts.openSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF007EF2),
-                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-        
-              SizedBox(height: 16,),
-              Row(
-                children: [
-                  Expanded(
-                      child: Container(
-                      height: 53,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Color(0xFF007EF2), width: 1),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 8,),
-                          Image.asset("assets/images/circum_search.png",),
-                          SizedBox(width: 8,),
-                          Text("Search Hotel By Name", style: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.normal, color: Color(0xFF7F7F7F)),)
-                        ]
-                      )
-                  ),
-                  ),
-                  SizedBox(width: 16,),
-                  Stack(
-                    alignment: Alignment.center,
+
+                  SizedBox(height: 16,),
+                  Row(
                       children: [
-                        Container(
-                        width: 53,
-                        height: 53,
-                          decoration: BoxDecoration(
-                            color: Color(0xFF007EF2),
-                            borderRadius: BorderRadius.circular(10),
+                        Expanded(
+                          child: Container(
+                              height: 53,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: Color(0xFF007EF2), width: 1),
+                              ),
+                              child: Row(
+                                  children: [
+                                    SizedBox(width: 8,),
+                                    Image.asset(
+                                      "assets/images/circum_search.png",),
+                                    SizedBox(width: 8,),
+                                    Text("Search Hotel By Name",
+                                      style: GoogleFonts.roboto(fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          color: Color(0xFF7F7F7F)),)
+                                  ]
+                              )
                           ),
-                      ),
-                        Container(
-                            child: Image.asset("assets/images/mi_filter.png", ),
                         ),
+                        SizedBox(width: 16,),
+                        Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: 53,
+                                height: 53,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF007EF2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              Container(
+                                child: Image.asset(
+                                  "assets/images/mi_filter.png",),
+                              ),
+                            ]
+                        )
                       ]
-                  )
-                ]
-              ),
-              SizedBox(height: 10,),
-              Row(
-                children: [
-                  Text("Recommended Hotels", style: GoogleFonts.openSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF007EF2),
-                  ),),
-                ],
-              ),
-              SizedBox(height: 10,),
-              /// Card of the resort
-              SizedBox(
-                height: 310,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: 50,
-                  itemBuilder: (context, index) {
-                    if(index % 2 == 0) {
-                      return Container(
-                        margin: EdgeInsets.only(right: 16),
-                        width: 230,
-                        padding: EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: Center(
-                          child: Column(
-                              children: [
-                                // Image
-                                Container(
-                                  height: 150,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: Color(0xFFFFD700)),
-                                    image: DecorationImage(image: AssetImage(
-                                        "assets/images/resort-01.png"),
-                                        fit: BoxFit.cover),
-                                  ),
-                                ),
-                                SizedBox(height: 10,),
-                                Row(
-                                  children: [
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Text("Recommended Hotels", style: GoogleFonts.openSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF007EF2),
+                      ),),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
 
-                                    /// Discount off
+                  /// Card of the resort
+                  SizedBox(
+                    height: 310,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: hotels.length,
+                        itemBuilder: (context, index) {
+                          final hotel = hotels[index];
+                          return Container(
+                            margin: EdgeInsets.only(right: 16),
+                            width: 230,
+                            padding: EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8)
+                            ),
+                            child: Center(
+                              child: Column(
+                                  children: [
+                                    // Image
                                     Container(
-                                      width: 80,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10),
+                                      height: 150,
+                                      width: 200,
                                       decoration: BoxDecoration(
-                                          color: Color(0xFF007EF2).withOpacity(
-                                              0.12),
-                                          borderRadius: BorderRadius.circular(
-                                              10)
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: Color(0xFFFFD700)),
+                                        image: DecorationImage(
+                                            image: NetworkImage(hotel['image']),
+                                            fit: BoxFit.cover),
                                       ),
-                                      child: Center(child: Text("10% OFF",
-                                        style: GoogleFonts.openSans(fontSize: 8,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFF007EF2)),)),
                                     ),
-                                    SizedBox(width: 16,),
-
-                                    /// Rating
-                                    Container(
-                                        width: 50,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF007EF2)
-                                                .withOpacity(
-                                                0.12),
-                                            borderRadius: BorderRadius.circular(
-                                                10)
-                                        ),
-                                        child: Center(child: Row(
-                                          children: [
-                                            SizedBox(width: 8),
-                                            Icon(Icons.star,
-                                              color: Color(0xFFFFD700),
-                                              size: 12,),
-                                            SizedBox(width: 4),
-                                            Text("4.5",
-                                              style: GoogleFonts.openSans(
-                                                  fontSize: 8,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color(0xFF007EF2)),)
-                                          ],
-                                        )
-                                        )
-                                    ),
-                                    Expanded(child: SizedBox(width: 20,)),
-
-                                    /// Favorite
-                                    Icon(
-                                      Icons.favorite_border,
-                                      color: Color(0xFF007EF2),
-                                      size: 28,)
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "AYANA Resort", style: GoogleFonts.roboto(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black,
-                                    ),),
-                                  ],
-                                ),
-                                SizedBox(height: 5,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                    SizedBox(height: 10,),
                                     Row(
                                       children: [
-                                        Icon(Icons.location_on,
-                                          color: Color(0xFF737373), size: 10,),
-                                        SizedBox(width: 4,),
-                                        Text("Bali, Indonesia",
-                                          style: GoogleFonts.openSans(
-                                              fontSize: 10,
-                                              color: Color(0xFF737373)),)
+
+                                        /// Discount off
+                                        Container(
+                                          width: 80,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          decoration: BoxDecoration(
+                                              color: Color(0xFF007EF2)
+                                                  .withOpacity(
+                                                  0.12),
+                                              borderRadius: BorderRadius
+                                                  .circular(
+                                                  10)
+                                          ),
+                                          child: Center(child: Text("10% OFF",
+                                            style: GoogleFonts.openSans(
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.w400,
+                                                color: Color(0xFF007EF2)),)),
+                                        ),
+                                        SizedBox(width: 16,),
+
+                                        /// Rating
+                                        Container(
+                                            width: 50,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            decoration: BoxDecoration(
+                                                color: Color(0xFF007EF2)
+                                                    .withOpacity(
+                                                    0.12),
+                                                borderRadius: BorderRadius
+                                                    .circular(
+                                                    10)
+                                            ),
+                                            child: Center(child: Row(
+                                              children: [
+                                                SizedBox(width: 8),
+                                                Icon(Icons.star,
+                                                  color: Color(0xFFFFD700),
+                                                  size: 12,),
+                                                SizedBox(width: 4),
+                                                Text('${hotel['rating']}',
+                                                  style: GoogleFonts.openSans(
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight
+                                                          .w400,
+                                                      color: Color(
+                                                          0xFF007EF2)),)
+                                              ],
+                                            )
+                                            )
+                                        ),
+                                        Expanded(child: SizedBox(width: 20,)),
+
+                                        /// Favorite
+                                        Icon(
+                                          Icons.favorite_border,
+                                          color: Color(0xFF007EF2),
+                                          size: 28,)
+                                      ],
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Row(
+                                      children: [
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown, // scale down text to fit the available width
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${hotel['name']}',
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.black,
+                                            ),),
+                                        ),
                                       ],
                                     ),
                                     SizedBox(height: 5,),
-                                    Row(
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
                                       children: [
-                                        Text("\$200 - \$500 USD",
-                                            style: GoogleFonts.roboto(
+                                        Row(
+                                          children: [
+                                            Icon(Icons.location_on,
+                                              color: Color(0xFF737373),
+                                              size: 10,),
+                                            SizedBox(width: 4,),
+                                            Text('${hotel['location']}',
+                                              style: GoogleFonts.openSans(
+                                                  fontSize: 10,
+                                                  color: Color(0xFF737373)),)
+                                          ],
+                                        ),
+                                        SizedBox(height: 5,),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "\$${hotel['price_per_night']}",
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 10,
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.w300,
+                                                decoration: TextDecoration.lineThrough,
+                                              ),
+                                            ),
+                                            SizedBox(width: 6,),
+                                            Text(
+                                              "\$${((hotel['price_per_night'] * (1- (10/100)))).toStringAsFixed(0)} ${hotel['currency']}",
+                                              style: GoogleFonts.roboto(
                                                 fontSize: 10,
                                                 color: Color(0xFF007EF2),
-                                                fontWeight: FontWeight.w300)),
-                                        Text(
-                                          "/night", style: GoogleFonts.roboto(
-                                            fontSize: 10,
-                                            color: Color(0xFF737373),
-                                            fontWeight: FontWeight.w300),)
-                                      ],
-                                    )
-                                  ],
-                                )
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                            ),
 
-                              ]
-                          ),
-                        ),
-                      );
-                    }
-                    else{
-                      return Container(
-                        margin: EdgeInsets.only(right: 16),
-                        width: 230,
-                        padding: EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: Center(
-                          child: Column(
-                              children: [
-                                // Image
-                                Container(
-                                  height: 150,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: Color(0xFFFFD700)),
-                                    image: DecorationImage(image: AssetImage(
-                                        "assets/images/Rectangle 33.png"),
-                                        fit: BoxFit.cover),
-                                  ),
-                                ),
-                                SizedBox(height: 10,),
-                                Row(
-                                  children: [
-
-                                    /// Discount off
-                                    Container(
-                                      width: 80,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      decoration: BoxDecoration(
-                                          color: Color(0xFF007EF2).withOpacity(
-                                              0.12),
-                                          borderRadius: BorderRadius.circular(
-                                              10)
-                                      ),
-                                      child: Center(child: Text("10% OFF",
-                                        style: GoogleFonts.openSans(fontSize: 8,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFF007EF2)),)),
-                                    ),
-                                    SizedBox(width: 16,),
-
-                                    /// Rating
-                                    Container(
-                                        width: 50,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF007EF2)
-                                                .withOpacity(
-                                                0.12),
-                                            borderRadius: BorderRadius.circular(
-                                                10)
-                                        ),
-                                        child: Center(child: Row(
-                                          children: [
-                                            SizedBox(width: 8),
-                                            Icon(Icons.star,
-                                              color: Color(0xFFFFD700),
-                                              size: 12,),
-                                            SizedBox(width: 4),
-                                            Text("4.7",
-                                              style: GoogleFonts.openSans(
-                                                  fontSize: 8,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color(0xFF007EF2)),)
+                                            Text(
+                                              "/night",
+                                              style: GoogleFonts.roboto(
+                                                  fontSize: 10,
+                                                  color: Color(0xFF737373),
+                                                  fontWeight: FontWeight.w300),)
                                           ],
                                         )
-                                        )
-                                    ),
-                                    Expanded(child: SizedBox(width: 20,)),
-
-                                    /// Favorite
-                                    Icon(
-                                      Icons.favorite_border,
-                                      color: Color(0xFF007EF2),
-                                      size: 28,)
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "COMO Uma Resort", style: GoogleFonts.roboto(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black,
-                                    ),),
-                                  ],
-                                ),
-                                SizedBox(height: 5,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.location_on,
-                                          color: Color(0xFF737373), size: 10,),
-                                        SizedBox(width: 4,),
-                                        Text("Bali, Indonesia",
-                                          style: GoogleFonts.openSans(
-                                              fontSize: 10,
-                                              color: Color(0xFF737373)),)
-                                      ],
-                                    ),
-                                    SizedBox(height: 5,),
-                                    Row(
-                                      children: [
-                                        Text("\$300 - \$500 USD",
-                                            style: GoogleFonts.roboto(
-                                                fontSize: 10,
-                                                color: Color(0xFF007EF2),
-                                                fontWeight: FontWeight.w300)),
-                                        Text(
-                                          "/night", style: GoogleFonts.roboto(
-                                            fontSize: 10,
-                                            color: Color(0xFF737373),
-                                            fontWeight: FontWeight.w300),)
                                       ],
                                     )
-                                  ],
-                                )
 
-                              ]
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                ),
-              ),
-              SizedBox(height: 10,),
-              Row(
-                children: [
-                  Text("Business Accommodation", style: GoogleFonts.openSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF007EF2),
-                  ),),
+                                  ]
+                              ),
+                            ),
+                          );
+                        }
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Text(
+                        "Business Accommodation", style: GoogleFonts.openSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF007EF2),
+                      ),),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+
+                  /// Card fo the Business Accommodation
+                  SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: 50,
+                        itemBuilder: (context, index) {
+                          if (index % 2 == 0) {
+                            return Container(
+                              margin: EdgeInsets.only(right: 16),
+                              width: 230,
+                              padding: EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8)
+                              ),
+                              child: Center(
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Image
+                                      Container(
+                                        height: 150,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              10),
+                                          border: Border.all(
+                                              color: Color(0xFFFFD700)),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/Rectangle 60.png"),
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+                                      Row(
+                                        children: [
+
+                                          /// AC
+                                          Container(
+                                            width: 80,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            decoration: BoxDecoration(
+                                                color: Color(0xFF007EF2)
+                                                    .withOpacity(0.12),
+                                                borderRadius: BorderRadius
+                                                    .circular(
+                                                    10)
+                                            ),
+                                            child: Center(
+                                                child: Text("Fast Wi-Fi",
+                                                  style: GoogleFonts.openSans(
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight
+                                                          .w400,
+                                                      color: Color(
+                                                          0xFF007EF2)),)),
+                                          ),
+                                          SizedBox(width: 16,),
+                                          Container(
+                                            width: 100,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            decoration: BoxDecoration(
+                                                color: Color(0xFF007EF2)
+                                                    .withOpacity(0.12),
+                                                borderRadius: BorderRadius
+                                                    .circular(
+                                                    10)
+                                            ),
+                                            child: Center(
+                                                child: FittedBox(
+                                                  child: Text(
+                                                    "AC Conference Room",
+                                                    style: GoogleFonts.openSans(
+                                                        fontSize: 6,
+                                                        fontWeight: FontWeight
+                                                            .w400,
+                                                        color: Color(
+                                                            0xFF007EF2)),),
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ]
+                                ),
+                              ),
+                            );
+                          }
+                          else {
+                            return Container(
+                              margin: EdgeInsets.only(right: 16),
+                              width: 230,
+                              padding: EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8)
+                              ),
+                              child: Center(
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Image
+                                      Container(
+                                        height: 150,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              10),
+                                          border: Border.all(
+                                              color: Color(0xFFFFD700)),
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/Rectangle 69.png"),
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+
+                                      /// In-room work stations
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 100,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            decoration: BoxDecoration(
+                                                color: Color(0xFF007EF2)
+                                                    .withOpacity(0.12),
+                                                borderRadius: BorderRadius
+                                                    .circular(
+                                                    10)
+                                            ),
+                                            child: Center(
+                                                child: FittedBox(
+                                                  child: Text(
+                                                    "In-room work stations",
+                                                    style: GoogleFonts.openSans(
+                                                        fontSize: 6,
+                                                        fontWeight: FontWeight
+                                                            .w400,
+                                                        color: Color(
+                                                            0xFF007EF2)),),
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ]
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                    ),
+                  ),
                 ],
               ),
-              SizedBox(height: 10,),
-              /// Card fo the Business Accommodation
-              SizedBox(
-                height: 250,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: 50,
-                    itemBuilder: (context, index) {
-                      if (index % 2 == 0) {
-                        return Container(
-                          margin: EdgeInsets.only(right: 16),
-                          width: 230,
-                          padding: EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8)
-                          ),
-                          child: Center(
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Image
-                                  Container(
-                                    height: 150,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Color(0xFFFFD700)),
-                                      image: DecorationImage(image: AssetImage(
-                                          "assets/images/Rectangle 60.png"),
-                                          fit: BoxFit.cover),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Row(
-                                    children: [
-
-                                      /// AC
-                                      Container(
-                                        width: 80,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF007EF2)
-                                                .withOpacity(0.12),
-                                            borderRadius: BorderRadius.circular(
-                                                10)
-                                        ),
-                                        child: Center(child: Text("Fast Wi-Fi",
-                                          style: GoogleFonts.openSans(
-                                              fontSize: 8,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xFF007EF2)),)),
-                                      ),
-                                      SizedBox(width: 16,),
-                                      Container(
-                                        width: 100,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF007EF2)
-                                                .withOpacity(0.12),
-                                            borderRadius: BorderRadius.circular(
-                                                10)
-                                        ),
-                                        child: Center(
-                                            child: FittedBox(
-                                              child: Text("AC Conference Room",
-                                                style: GoogleFonts.openSans(
-                                                    fontSize: 6,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Color(0xFF007EF2)),),
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                ]
-                            ),
-                          ),
-                        );
-                      }
-                      else{
-                        return Container(
-                          margin: EdgeInsets.only(right: 16),
-                          width: 230,
-                          padding: EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8)
-                          ),
-                          child: Center(
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Image
-                                  Container(
-                                    height: 150,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Color(0xFFFFD700)),
-                                      image: DecorationImage(image: AssetImage(
-                                          "assets/images/Rectangle 69.png"),
-                                          fit: BoxFit.cover),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10,),
-
-                                  /// In-room work stations
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 100,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF007EF2)
-                                                .withOpacity(0.12),
-                                            borderRadius: BorderRadius.circular(
-                                                10)
-                                        ),
-                                        child: Center(
-                                            child: FittedBox(
-                                              child: Text("In-room work stations",
-                                                style: GoogleFonts.openSans(
-                                                    fontSize: 6,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Color(0xFF007EF2)),),
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                ]
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+    ),
     );
   }
 }
