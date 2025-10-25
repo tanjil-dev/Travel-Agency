@@ -6,13 +6,11 @@ Future<List<dynamic>> fetchHotels() async {
     final response = await http.get(Uri.parse('https://gist.githubusercontent.com/tanjil-dev/2b4db997964028d3e9c295daa1681647/raw/1cc1aed1d8791a4e1279434c32ebe5f9d490de4b/my-travel-agency-api'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['hotels'] ?? []; // ensure non-null list
+      return data['hotels'];
     } else {
-      return []; // return empty list if API fails
-      // OR: throw Exception('Failed to load hotels');
+      throw Exception('Failed to fetch hotels: ${response.statusCode}');
     }
   } catch (e) {
-    print('Error fetching hotels: $e');
-    return []; // or rethrow
+    throw Exception('Failed to fetch hotels: $e');
   }
 }
